@@ -6,21 +6,13 @@ class User(AbstractUser):
     pass
 
 class Listings(models.Model):
-	APPLICANCES = 'Applicances'
-	AUTO = 'Auto'
-	CLOTHING = 'Clothing'
-	ELECTRONICS = 'Electrinics'
-	HOME = 'Home'
-	KITCHEN = 'Kitchen'
-	MISC = 'Misc'
-	OUTDOORS = 'Outdoors'
-	catergory_choices = [(APPLICANCES, 'Applicances'), (AUTO, 'Auto'),
-		(CLOTHING, 'Clothing'), (ELECTRONICS, 'Electrinics'), (HOME, 'Home'),
-		(KITCHEN, 'Kitchen'), (MISC, 'Misc'), (OUTDOORS, 'Outdoors')]
 	item_name = models.CharField(max_length=64)
+	item_description = models.CharField(max_length=500, default="no description")
 	seller = models.CharField(max_length=64)
-	category = models.CharField(max_length=11, choices=catergory_choices)
 	price = models.DecimalField(max_digits=19, decimal_places=2)
+	category = models.CharField(max_length=12, default="no category")
+	image = models.CharField(max_length=255, default="no image")
+	listing_date = models.DateField(default=0000-00-00)
 
 	def __str__(self):
 		return f"{self.item_name} {self.seller} {self.category} {self.price}"

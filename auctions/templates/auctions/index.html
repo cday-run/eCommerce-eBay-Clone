@@ -2,6 +2,19 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
-    TODO
+    {% if user.is_authenticated %}
+    	<a class="btn btn-primary" href="{% url 'create_listing' %}">Create Listing</a>
+    {% else %}
+    	<p>Login to Create a Listing</p>
+    {% endif %}
+    <ul>
+    	{% for item in listings %}
+    		<li><a href="#">{{ item.item_name }}</a></li>
+    	{% empty %}
+    		<li>No Listings</li>
+    	{% endfor %}
+    </ul>
+    
 {% endblock %}
+
+<!-- "{% url 'listing_page' title=item.item_name %}" -->
