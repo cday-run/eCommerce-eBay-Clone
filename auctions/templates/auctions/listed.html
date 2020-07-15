@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+
+	<h1>{{ title }}</h1>
+
+	<div>
+		{{ price }}
+	</div>
+
+	<div>
+		{{ description }}
+	</div>
+	{% if user.is_authenticated %}
+		<div>
+			<a class="btn btn primary" href="#">Add to Watchlist</a>
+			<form>
+				{% csrf_token %}
+				<input class="form-group" type="number" step="0.01" min="0">
+				<input class="btn btn primary" type="submit">
+			</form>
+		</div>
+		<div>
+			<form action="{% url 'comment' item_id=listed_id %}" method="post">
+				{% csrf_token %}
+				<input name="new_comment" type="text" placeholder="Add comment">
+				<input class="btn btn-success" type="submit">
+			</form>
+			{% for comment in comments %}
+				<h3>{{ comment.commenter }}</h3>
+				<p>{{ comment.comment }}</p>
+			{% empty %}
+				<p>No comments on this listing</p>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+{% endblock %}

@@ -9,7 +9,7 @@
     {% endif %}
     <ul>
     	{% for item in listings %}
-    		<li><a href="#">{{ item.item_name }}</a></li>
+    		<li><p hidden>Listing #{{ item.listed_id }}</p> <a href="{% url 'listed' item_id=item.listed_id %}">{{ item.item_name }}</a></li>
     	{% empty %}
     		<li>No Listings</li>
     	{% endfor %}

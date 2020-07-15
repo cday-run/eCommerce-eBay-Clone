@@ -4,13 +4,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listings, Bids, Comments
+from .models import User, Listing, Bid, Comment
 from django.contrib.auth.decorators import login_required
 import datetime
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "listings": Listings.objects.all()
+        "listings": Listing.objects.all()
         })
 
 
@@ -84,13 +84,35 @@ def create_listing(request):
         #Get listing date
         date = datetime.datetime.now()
         #Add post to listings
-        new_listing = Listings.objects.create(item_name=item_name, 
+        new_listing = Listing.objects.create(item_name=item_name, 
             item_description=item_description, seller=seller, price=price,
             image=image, category=category, listing_date=date)
         new_listing.save()
+
         """
         ###Change redirect to listing page
         """
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/create.html")
+
+def listed(request, item_id):
+    listed = Listing.objects.get(pk=item_id)
+    return render(request, "auctions/listed.html", {
+        "listed_id": item_id,
+        "title": listed.item_name,
+        "description": listed.item_description,
+        "price": listed.price,
+        "comments": Comment.objects.filter(listing_id=item_id)
+        })
+
+def comment(request, item_id):
+    if request.method == "POST":
+        listed = Listing.objects.get(pk=item_id)
+        user_id = request.user
+        username = user_id.username
+        comment = request.POST.get("new_comment")
+        new_comment = Comment.objects.create(listing_id=Listing.objects.get(listed_id=item_id),
+            commenter=username, comment=comment)
+        new_comment.save()
+        return HttpResponseRedirect(reverse("index"))
