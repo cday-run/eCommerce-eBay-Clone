@@ -10,6 +10,7 @@ class Listing(models.Model):
 	item_name = models.CharField(max_length=64)
 	item_description = models.CharField(max_length=500, default="no description")
 	seller = models.CharField(max_length=64)
+	buyer = models.CharField(max_length=64, default="none")
 	price = models.DecimalField(max_digits=19, decimal_places=2)
 	category = models.CharField(max_length=12, default="no category")
 	image = models.CharField(max_length=255, default="no image")
@@ -21,11 +22,11 @@ class Listing(models.Model):
 class Bid(models.Model):
 	bid_id = models.AutoField(primary_key=True)
 	listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bidded")
-	buyer = models.CharField(max_length=64)
+	bidder = models.CharField(max_length=64)
 	value = models.DecimalField(max_digits=19, decimal_places=2)
 
 	def __str__(self):
-		return f"{self.bid_id} {self.buyer} {self.value}"
+		return f"{self.bid_id} {self.bidder} {self.value}"
 
 class Comment(models.Model):
 	comment_id = models.AutoField(primary_key=True)

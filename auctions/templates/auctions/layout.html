@@ -17,6 +17,10 @@
             {% endif %}
         </div>
         <ul class="nav">
+            <form action="{% url 'search' %}" method="post">
+                    {% csrf_token %}
+                    <input class="search" type="text" name="q" placeholder="Search">
+            </form>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>

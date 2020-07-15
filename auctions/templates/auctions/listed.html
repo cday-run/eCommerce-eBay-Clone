@@ -6,7 +6,13 @@
 	<h1>{{ title }}</h1>
 
 	<div>
-		{{ price }}
+		{% for bid in high_bid %}
+			<h3>Current Highest Bid: {{ bid.value }}</h3> 
+			<h4>By: {{ bid.bidder }}</h4>
+		{% empty %}
+			<h3 hidden></h3>
+		{% endfor %}
+		<h4>Starting Price: {{ price }}</h4>
 	</div>
 
 	<div>
@@ -15,17 +21,17 @@
 	{% if user.is_authenticated %}
 		<div>
 			<a class="btn btn primary" href="#">Add to Watchlist</a>
-			<form>
+			<form action="{% url 'bid' item_id=listed_id %}">
 				{% csrf_token %}
-				<input class="form-group" type="number" step="0.01" min="0">
-				<input class="btn btn primary" type="submit">
+				<input name="new_bid" class="form-group" type="number" step="0.01">
+				<button class="btn btn primary" type="submit">Submit Bid</button>
 			</form>
 		</div>
 		<div>
 			<form action="{% url 'comment' item_id=listed_id %}" method="post">
 				{% csrf_token %}
 				<input name="new_comment" type="text" placeholder="Add comment">
-				<input class="btn btn-success" type="submit">
+				<button class="btn btn-success" type="submit">Comment</button>
 			</form>
 			{% for comment in comments %}
 				<h3>{{ comment.commenter }}</h3>

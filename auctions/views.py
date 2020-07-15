@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing, Bid, Comment
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import datetime
 
@@ -103,9 +104,11 @@ def listed(request, item_id):
         "title": listed.item_name,
         "description": listed.item_description,
         "price": listed.price,
-        "comments": Comment.objects.filter(listing_id=item_id)
+        "comments": Comment.objects.filter(listing_id=item_id),
+        "high_bid": Bid.objects.filter(listing_id=item_id)
         })
 
+@login_required
 def comment(request, item_id):
     if request.method == "POST":
         listed = Listing.objects.get(pk=item_id)
@@ -116,3 +119,19 @@ def comment(request, item_id):
             commenter=username, comment=comment)
         new_comment.save()
         return HttpResponseRedirect(reverse("index"))
+
+@login_required
+def bid(request, item_id):
+    if request.method == "POST":
+        user_id = request.user
+        username = user_id.username
+
+def search(request):
+    #Get the title parameter from the search form input
+    title = request.POST.get("q")
+    #Find listings with query as a substrin in their title
+    results = Listing.objects.filter(
+        Q(item_name__contains=title))
+    return render(request, "auctions/results.html", {
+        "results": results
+        })
