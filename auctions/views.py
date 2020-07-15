@@ -89,7 +89,11 @@ def create_listing(request):
             item_description=item_description, seller=seller, price=price,
             image=image, category=category, listing_date=date)
         new_listing.save()
-
+        new_listing.pk
+        #Add post to bids
+        new_bid = Bid.objects.create(listing_id=Listing.objects.get(listed_id=new_listing.pk), 
+            bidder=seller, value=price)
+        new_bid.save()
         """
         ###Change redirect to listing page
         """
@@ -125,6 +129,13 @@ def bid(request, item_id):
     if request.method == "POST":
         user_id = request.user
         username = user_id.username
+        bid_value = request.POST.get("new_bid")
+        current_bid = Bid.objects.values_list('values', flat=True).get(
+            listing_id=item_id)
+    return HttpResponseRedirect(reverse("index"))
+        # if bid_value > current_bid:
+        #     try:
+
 
 def search(request):
     #Get the title parameter from the search form input
