@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing, Bid, Comment
+from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -129,13 +130,18 @@ def bid(request, item_id):
     if request.method == "POST":
         user_id = request.user
         username = user_id.username
-        bid_value = request.POST.get("new_bid")
-        current_bid = Bid.objects.values_list('values', flat=True).get(
-            listing_id=item_id)
-    return HttpResponseRedirect(reverse("index"))
-        # if bid_value > current_bid:
-        #     try:
-
+        bid_value = int(request.POST.get("new_bid"))
+        item = Bid.objects.get(listing_id=item_id)
+        current_bid = int(item.value)
+        if bid_value > current_bid:
+            item.value = bid_value
+            item.save()
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            messages.warning(request, "Bid must be higher than current highest!")
+            return HttpResponseRedirect(reverse("listed"))
+    else:
+        return HttpResponseRedirect(reverse("index"))
 
 def search(request):
     #Get the title parameter from the search form input
