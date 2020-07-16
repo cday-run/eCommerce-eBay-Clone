@@ -158,20 +158,21 @@ def search(request):
 
 def add_watch(request, item_id):
     if request.method == "POST":
-        user_id = request.user
+        user = request.user
+        user_id = user.id
         listed = Listing.objects.get(pk=item_id)
-        if Wishlist.objects.filter(listing_id=item_id) == None:
-            new_wishlist = Wishlist.objects.create(user_id=user_id, listing_id=item_id, wished_item=listed.item_name)
-            new_wishlist.save()
-            messages.warning(request, "Item added to Watchlist")
-            return render(request, "auctions/wishlist.html", {
-                "items": Wishlist.objects.filter(user_id=user_id)
-                })
-        else:
+        if Wishlist.objects.filter(listing_id=item_id):
             messages.warning(request, "Item already on Watchlist")
             return render(request, "auctions/wishlist.html", {
                 "items": Wishlist.objects.filter(user_id=user_id)
                 })
+        else:
+            new_wishlist = Wishlist.objects.create(user_id=user_id, listing_id=Listing.objects.get(listed_id=item_id), wished_item=listed.item_name)
+            new_wishlist.save()
+            messages.warning(request, "Item added to Watchlist")
+            return render(request, "auctions/wishlist.html", {
+                "items": Wishlist.objects.filter(user_id=user_id)
+                })           
     else:
         return HttpResponseRedirect(reverse("wishlist"))
 
