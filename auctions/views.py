@@ -4,11 +4,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Bid, Comment
+from .models import User, Listing, Bid, Comment, Wishlist
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import datetime
+
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -100,6 +101,8 @@ def create_listing(request):
         """
         return HttpResponseRedirect(reverse("index"))
     else:
+        field_object = Category._meta.get_field('categories')
+        field_value = field_object.value_from_object(Category.objects.first())
         return render(request, "auctions/create.html")
 
 def listed(request, item_id):
@@ -151,4 +154,29 @@ def search(request):
         Q(item_name__contains=title))
     return render(request, "auctions/results.html", {
         "results": results
+        })
+
+def add_watch(request, item_id):
+    if request.method == "POST":
+        user_id = request.user
+        listed = Listing.objects.get(pk=item_id)
+        if Wishlist.objects.filter(listing_id=item_id) == None:
+            new_wishlist = Wishlist.objects.create(user_id=user_id, listing_id=item_id, wished_item=listed.item_name)
+            new_wishlist.save()
+            messages.warning(request, "Item added to Watchlist")
+            return render(request, "auctions/wishlist.html", {
+                "items": Wishlist.objects.filter(user_id=user_id)
+                })
+        else:
+            messages.warning(request, "Item already on Watchlist")
+            return render(request, "auctions/wishlist.html", {
+                "items": Wishlist.objects.filter(user_id=user_id)
+                })
+    else:
+        return HttpResponseRedirect(reverse("wishlist"))
+
+def wishlist(request):
+    user_id = request.user
+    return render(request, "auctions/wishlist.html", {
+        "items": Wishlist.objects.filter(user_id=user_id)
         })

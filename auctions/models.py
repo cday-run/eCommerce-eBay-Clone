@@ -36,3 +36,12 @@ class Comment(models.Model):
 
 	def __str__(self):
 		return f"{self.comment_id} {self.commenter} {self.comment}"
+
+class Wishlist(models.Model):
+	wishlist_id = models.AutoField(primary_key=True)
+	user_id = models.CharField(max_length=64)
+	listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="wished")
+	wished_item = models.CharField(max_length=64, default="no item")
+
+	def __str__(self):
+		return f"{self.wishlist_id} {self.listing_id} {self.user_id} {self.wished_item}"
