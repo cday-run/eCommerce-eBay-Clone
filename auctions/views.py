@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import datetime
 
-Categories = [" ", "Appliances", "Auto", "Clothing", "Electronics", "Home", "Kitchen", "Outdoors"]
+Categories = ["Other", "Appliances", "Auto", "Clothing", "Electronics", "Home", "Kitchen", "Outdoors"]
 
 def index(request):
     return render(request, "auctions/index.html", {

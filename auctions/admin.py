@@ -12,9 +12,12 @@ class BidAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
 	list_display = ("comment_id", "listing_id", "commenter", "comment")
 
+class WishlistAdmin(admin.ModelAdmin):
+	list_display = ("wishlist_id", "user_id", "listing_id", "wished_item")
+
 # Register your models here.
 admin.site.register(User)
 admin.site.register(Listing, ListingAdmin)
 admin.site.register(Bid, BidAdmin)
 admin.site.register(Comment, CommentAdmin)
-admin.site.register(Wishlist)
+admin.site.register(Wishlist, WishlistAdmin)
