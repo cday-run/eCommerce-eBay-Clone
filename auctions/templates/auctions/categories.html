@@ -7,7 +7,11 @@
 {% block body %}
 
 	<div>
-
+	    <ul>
+	    	{% for item in categories %}
+	    		<li><a href="{% url 'filtered' name=item %}">{{ item }}</a></li>
+	    	{% endfor %}
+	    </ul>
 	</div>
 
 {% endblock %}

@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import datetime
 
+Categories = [" ", "Appliances", "Auto", "Clothing", "Electronics", "Home", "Kitchen", "Outdoors"]
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -101,9 +102,9 @@ def create_listing(request):
         """
         return HttpResponseRedirect(reverse("index"))
     else:
-        field_object = Category._meta.get_field('categories')
-        field_value = field_object.value_from_object(Category.objects.first())
-        return render(request, "auctions/create.html")
+        return render(request, "auctions/create.html", {
+            "categories" : Categories
+            })
 
 def listed(request, item_id):
     listed = Listing.objects.get(pk=item_id)
@@ -181,3 +182,15 @@ def wishlist(request):
     return render(request, "auctions/wishlist.html", {
         "items": Wishlist.objects.filter(user_id=user_id)
         })
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+    "categories": Categories
+    })
+
+def filtered(request, name):
+    results = Listing.objects.filter(category=name)
+    return render(request, "auctions/filtered.html", {
+    "results": results,
+    "name" : name
+    })
