@@ -177,8 +177,19 @@ def add_watch(request, item_id):
     else:
         return HttpResponseRedirect(reverse("wishlist"))
 
+def delete_watch(request, item_id):
+    if request.method == "POST":
+        user = request.user
+        user_id = user.id
+        listed = Listing.objects.get(pk=item_id)
+        delete_item = Wishlist.objects.filter(listing_id=item_id).delete()
+        return render( request, "auctions/wishlist.html", {
+                "items": Wishlist.objects.filter(user_id=user_id)
+                })
+
 def wishlist(request):
-    user_id = request.user
+    user = request.user
+    user_id = user.id
     return render(request, "auctions/wishlist.html", {
         "items": Wishlist.objects.filter(user_id=user_id)
         })

@@ -15,7 +15,12 @@
 
     <ul>
     	{% for item in items %}
-    		<li><p hidden>{{ item.listing_id.listed_id }}</p> <a href="{% url 'listed' item_id=item.listing_id.listed_id %}">{{ item.wished_item }}</a></li>
+    		<li><p hidden>{{ item.listing_id.listed_id }}</p> <a href="{% url 'listed' item_id=item.listing_id.listed_id %}">{{ item.wished_item }}</a>
+                <form action="{% url 'delete_watch' item_id=item.listing_id.listed_id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Remove</button>
+                </form>
+            </li>
     	{% empty %}
     		<li>No items on watchlist</li>
     	{% endfor %}
