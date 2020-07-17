@@ -15,6 +15,7 @@ class Listing(models.Model):
 	category = models.CharField(max_length=12, default="no category")
 	image = models.CharField(max_length=255, default="no image")
 	listing_date = models.DateField(default=0000-00-00)
+	available = models.BooleanField(default=True)
 
 	def __str__(self):
 		return f"{self.item_name} {self.seller} {self.category} {self.price}"
