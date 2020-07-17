@@ -1,5 +1,9 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}
+    My Wishlist
+{% endblock %}
+
 {% block body %}
     <h2>My Watchlist</h2>
 	<!-- display alert message if criteria is met in views -->
@@ -12,10 +16,11 @@
     		{% endfor %}
     	</div>
     {% endif %}
-
+    <!-- Render all items on user's watchlist -->
     <ul>
     	{% for item in items %}
     		<li><p hidden>{{ item.listing_id.listed_id }}</p> <a href="{% url 'listed' item_id=item.listing_id.listed_id %}">{{ item.wished_item }}</a>
+                <!--Create a button to allow user to delete an item from watchlist -->
                 <form action="{% url 'delete_watch' item_id=item.listing_id.listed_id %}" method="post">
                     {% csrf_token %}
                     <button class="btn btn-danger" type="submit">Remove</button>

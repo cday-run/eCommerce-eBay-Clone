@@ -1,12 +1,18 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}
+    Active Listings
+{% endblock %}
+
 {% block body %}
     <h2>Active Listings</h2>
+    <!-- Allow user to make a post if authenticated -->
     {% if user.is_authenticated %}
     	<a class="btn btn-primary" href="{% url 'create_listing' %}">Create Listing</a>
     {% else %}
     	<p>Login to Create a Listing</p>
     {% endif %}
+    <!-- Display all listings and information about them -->
     <ul>
     	{% for item in listings %}
     		<li><p hidden>{{ item.listed_id }}</p> <a href="{% url 'listed' item_id=item.listed_id %}">{{ item.item_name }}</a> {{ item.price }}
@@ -27,5 +33,3 @@
     </ul>
     
 {% endblock %}
-
-<!-- "{% url 'listing_page' title=item.item_name %}" -->

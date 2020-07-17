@@ -1,8 +1,12 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}
+    ACreate Listing
+{% endblock %}
+
 {% block body %}
     <h2>Create Listing</h2>
-
+    <!-- Provide a form that allows user to submit all information for creating a listing -->
     <form action="{% url 'create_listing' %}", method="post">
     	{% csrf_token %}
     	<input name="title" type="text" placeholder="Title" required>

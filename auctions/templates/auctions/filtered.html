@@ -7,6 +7,7 @@
 {% block body %}
 
 	<div>
+		<!--Display all listings with category matching category user clicked on from Categories page -->
 	    <ul>
 	    	{% for result in results %}
 	    		<li><p hidden>{{ result.listed_id }}</p> <a href="{% url 'listed' item_id=result.listed_id %}">{{ result.item_name }}</a></li>
