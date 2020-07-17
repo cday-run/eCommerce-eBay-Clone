@@ -9,7 +9,10 @@
     {% endif %}
     <ul>
     	{% for item in listings %}
-    		<li><p hidden>{{ item.listed_id }}</p> <a href="{% url 'listed' item_id=item.listed_id %}">{{ item.item_name }}</a> {{ item.price }} 
+    		<li><p hidden>{{ item.listed_id }}</p> <a href="{% url 'listed' item_id=item.listed_id %}">{{ item.item_name }}</a> {{ item.price }}
+            {% if item.available == False %}
+                <button class="btn btn-danger">Closed</button>
+            {% endif %} 
             <p>{{ item.item_description }}</p> 
             {% if item.image %}
                 <a href="{{ item.image }}" target="blank">See Image</a> 

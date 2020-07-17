@@ -107,14 +107,22 @@ def create_listing(request):
             })
 
 def listed(request, item_id):
+    user = request.user
+    username = user.username
     listed = Listing.objects.get(pk=item_id)
+    high_bid = Bid.objects.get(listing_id=item_id)
+    winner = high_bid.bidder
     return render(request, "auctions/listed.html", {
         "listed_id": item_id,
         "title": listed.item_name,
         "description": listed.item_description,
         "price": listed.price,
+        "available": listed.available,
         "comments": Comment.objects.filter(listing_id=item_id),
-        "high_bid": Bid.objects.filter(listing_id=item_id)
+        "high_bid": Bid.objects.filter(listing_id=item_id),
+        "winner": winner,
+        "seller": listed.seller,
+        "username":username
         })
 
 @login_required
@@ -205,3 +213,10 @@ def filtered(request, name):
     "results": results,
     "name" : name
     })
+
+def close(request, item_id):
+    if request.method == "POST":
+        listed = Listing.objects.get(pk=item_id)
+        listed.available = False
+        listed.save()
+        return HttpResponseRedirect(reverse("index"))

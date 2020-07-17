@@ -16,5 +16,6 @@ urlpatterns = [
     path("delete_watch/<int:item_id>", views.delete_watch, name="delete_watch"),
     path("wishlist", views.wishlist, name="wishlist"),
     path("filtered/<str:name>", views.filtered, name="filtered"),
-    path("categories", views.categories, name="categories")
+    path("categories", views.categories, name="categories"),
+    path("close<int:item_id>", views.close, name="close")
 ]
