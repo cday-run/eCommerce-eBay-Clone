@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 import datetime
 
+#Define all possible categories for a listing
 Categories = ["Other", "Appliances", "Auto", "Clothing", "Electronics", "Home", "Kitchen", "Outdoors"]
 
 def index(request):
@@ -68,6 +69,33 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+"""
+Create a template for users to view a listing
+"""
+def listed(request, item_id):
+    #Get information required to render the template
+    user = request.user
+    username = user.username
+    listed = Listing.objects.get(pk=item_id)
+    high_bid = Bid.objects.get(listing_id=item_id)
+    winner = high_bid.bidder
+    #Render the template
+    return render(request, "auctions/listed.html", {
+        "listed_id": item_id,
+        "title": listed.item_name,
+        "description": listed.item_description,
+        "price": listed.price,
+        "available": listed.available,
+        "comments": Comment.objects.filter(listing_id=item_id),
+        "high_bid": Bid.objects.filter(listing_id=item_id),
+        "winner": winner,
+        "seller": listed.seller,
+        "username":username
+        })
+
+"""
+Create a function that allows users to create a listing on the website
+"""
 @login_required
 def create_listing(request):
     if request.method == "POST":
@@ -106,75 +134,82 @@ def create_listing(request):
             "categories" : Categories
             })
 
-def listed(request, item_id):
-    user = request.user
-    username = user.username
-    listed = Listing.objects.get(pk=item_id)
-    high_bid = Bid.objects.get(listing_id=item_id)
-    winner = high_bid.bidder
-    return render(request, "auctions/listed.html", {
-        "listed_id": item_id,
-        "title": listed.item_name,
-        "description": listed.item_description,
-        "price": listed.price,
-        "available": listed.available,
-        "comments": Comment.objects.filter(listing_id=item_id),
-        "high_bid": Bid.objects.filter(listing_id=item_id),
-        "winner": winner,
-        "seller": listed.seller,
-        "username":username
-        })
-
+"""
+Create a function that allows users to post comments on a listing 
+"""
 @login_required
 def comment(request, item_id):
     if request.method == "POST":
+        #Get the list id
         listed = Listing.objects.get(pk=item_id)
+        #Get the id of the user making the comment
         user_id = request.user
         username = user_id.username
+        #Get the content of the comment from the form
         comment = request.POST.get("new_comment")
+        #Create the comment and save it in the Comment model
         new_comment = Comment.objects.create(listing_id=Listing.objects.get(listed_id=item_id),
             commenter=username, comment=comment)
         new_comment.save()
         return HttpResponseRedirect(reverse("index"))
 
+"""
+Create a function tht allows users to bid on a listing
+"""
 @login_required
 def bid(request, item_id):
     if request.method == "POST":
+        #Get the id of the user making the bid
         user_id = request.user
         username = user_id.username
+        #Get the value of the bif from the form
         bid_value = int(request.POST.get("new_bid"))
+        #Get the item being bidded on
         item = Bid.objects.get(listing_id=item_id)
         current_bid = int(item.value)
+        #Check that the bid is higher than the current highest bid
         if bid_value > current_bid:
             item.value = bid_value
             item.save()
             return HttpResponseRedirect(reverse("index"))
+        #If bid is not higher then return an error
         else:
             messages.warning(request, "Bid must be higher than current highest!")
             return HttpResponseRedirect(reverse("listed"))
     else:
         return HttpResponseRedirect(reverse("index"))
 
+"""
+Create a search funtion that allows users to query the listings
+"""
 def search(request):
     #Get the title parameter from the search form input
     title = request.POST.get("q")
-    #Find listings with query as a substrin in their title
+    #Find listings with query as a substring in their title
     results = Listing.objects.filter(
         Q(item_name__contains=title))
     return render(request, "auctions/results.html", {
         "results": results
         })
 
+"""
+Give users the ability to add a listing to their watchlist
+"""
 def add_watch(request, item_id):
     if request.method == "POST":
+        #Get the id if the user adding the item to watchlist
         user = request.user
         user_id = user.id
+        #Get the id of the item being added
         listed = Listing.objects.get(pk=item_id)
+        #Check if item is already on the user's watchlist
+        #If already on watchlist redirect them to their watchlist and notify them it is already it
         if Wishlist.objects.filter(listing_id=item_id):
             messages.warning(request, "Item already on Watchlist")
             return render(request, "auctions/wishlist.html", {
                 "items": Wishlist.objects.filter(user_id=user_id)
                 })
+        #Otherwise add the item to their watchlist and redirect them to their watchlist
         else:
             new_wishlist = Wishlist.objects.create(user_id=user_id, listing_id=Listing.objects.get(listed_id=item_id), wished_item=listed.item_name)
             new_wishlist.save()
@@ -185,16 +220,26 @@ def add_watch(request, item_id):
     else:
         return HttpResponseRedirect(reverse("wishlist"))
 
+"""
+Give users the ability to remove items from their watchlist
+"""
 def delete_watch(request, item_id):
     if request.method == "POST":
+        #Get the id of the user
         user = request.user
         user_id = user.id
+        #Get the id of the item
         listed = Listing.objects.get(pk=item_id)
+        #Remove the item from the watchlist and redirect them to their watch list
         delete_item = Wishlist.objects.filter(listing_id=item_id).delete()
+        messages.warning(request, "Item removed from Watchlist")
         return render( request, "auctions/wishlist.html", {
                 "items": Wishlist.objects.filter(user_id=user_id)
                 })
 
+"""
+Create a route to a watchlist template for users to view their watchlist
+"""
 def wishlist(request):
     user = request.user
     user_id = user.id
@@ -202,11 +247,17 @@ def wishlist(request):
         "items": Wishlist.objects.filter(user_id=user_id)
         })
 
+"""
+Create a route to a categories page for users to view listing categories
+"""
 def categories(request):
     return render(request, "auctions/categories.html", {
     "categories": Categories
     })
 
+"""
+When user clicks on a category on the categories page return results filtered to that category
+"""
 def filtered(request, name):
     results = Listing.objects.filter(category=name)
     return render(request, "auctions/filtered.html", {
@@ -214,6 +265,9 @@ def filtered(request, name):
     "name" : name
     })
 
+"""
+Give functionality to listing creator to close the listing
+"""
 def close(request, item_id):
     if request.method == "POST":
         listed = Listing.objects.get(pk=item_id)
