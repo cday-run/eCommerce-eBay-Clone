@@ -37,7 +37,7 @@
                         </h5> 
                         <p class="card-text">{{ item.item_description }}</p> 
                         {% if item.image %}
-                            <a class="card-link" href="{{ item.image }}" target="blank">See Image</a> 
+                            <img src="{{ item.image }}" alt="image" width="75" height="50">
                         {% else %}
                             <a class="card-text">No image</a>
                         {% endif %}

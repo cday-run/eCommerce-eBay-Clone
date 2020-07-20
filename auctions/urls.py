@@ -18,4 +18,4 @@ urlpatterns = [
     path("filtered/<str:name>", views.filtered, name="filtered"),
     path("categories", views.categories, name="categories"),
     path("close<int:item_id>", views.close, name="close")
-]
+] 

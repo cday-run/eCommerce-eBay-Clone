@@ -9,7 +9,7 @@
     <h2>Create a Listing</h2>
     <!-- Provide a form that allows user to submit all information for creating a listing -->
     <div class="container">
-        <form action="{% url 'create_listing' %}", method="post">
+        <form action="{% url 'create_listing' %}", method="post" enctype="multipart/form-data">
         	{% csrf_token %}
             <div class="form-group">
                 <label>Title: </label>
