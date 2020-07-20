@@ -6,7 +6,7 @@
 
 
 {% block body %}
-
+<div class="container">
 	<h1>{{ title }}</h1>
 	<!-- Notify who the auction winner is if it is closed -->
 	{% if available == False %}
@@ -31,55 +31,76 @@
 			{% empty %}
 				<h3 hidden></h3>
 			{% endfor %}
-			<h4>Starting Price: {{ price }}</h4>
+			<h5>Starting Price: {{ price }}</h4>
 		</div>
 
 		<div>
-			{{ description }}
+			{% if item.image %}
+                <a href="{{ item.image }}" target="blank">See Image</a> 
+            {% else %}
+                <a>No image</a>
+           	{% endif %}
+           	<hr>
+			<p>{{ description }}</p>
 		</div>
 		{% if user.is_authenticated %}
-			<!-- create button to add item to watchlist -->
-			<div>
-				<form action="{% url 'add_watch' item_id=listed_id %}" method="post">
-					{% csrf_token %}
-					<button class="btn btn-primary" type="submit">Add to Watchlist</button>
-				</form>
-				{% if item.image %}
-                	<a href="{{ item.image }}" target="blank">See Image</a> 
-            	{% else %}
-                	<p>No image</p>
-           		{% endif %}
+			<div class="container">
+           	<div class="row justify-content-between align-items-center">
            		<!-- if user is creator create button to allow them to close auction -->
            		{% if seller == username %}
 	           		<form action="{% url 'close' item_id=listed_id %}" method="post">
 						{% csrf_token %}
-						<button class="btn btn primary" type="submit">Close Auction</button>
+						<button class="btn btn-danger" type="submit">Close Auction</button>
 					</form>
 				{% else %}
-				<!-- if anyother user create button to allow them to bid -->
+				<!-- if another user viewing page create button to allow them to bid -->
 					<form action="{% url 'bid' item_id=listed_id %}" method="post">
 						{% csrf_token %}
-						<input name="new_bid" class="form-group" type="number" step="0.01">
-						<button class="btn btn primary" type="submit">Submit Bid</button>
+						<div class="form-group">
+							<input name="new_bid" class="form-control" type="number" step="0.01" placeholder="$0.00">
+						</div>
+						<div class="form-group">
+							<button class="btn btn-warning" type="submit">Submit Bid</button>
+						</div>
 					</form>
+					<!-- create button to add item to watchlist -->
+					<div>
+						<form action="{% url 'add_watch' item_id=listed_id %}" method="post">
+							{% csrf_token %}
+							<button class="btn btn-primary" type="submit">Add to Watchlist</button>
+						</form>
+					</div>
 				{% endif %}
 			</div>
-			<div>
-				<!-- create a form to allow users to post comments -->
-				<form action="{% url 'comment' item_id=listed_id %}" method="post">
-					{% csrf_token %}
-					<input name="new_comment" type="text" placeholder="Add comment">
-					<button class="btn btn-success" type="submit">Comment</button>
-				</form>
-				<!--Display all comments on current listing -->
+			</div>
+			<hr>
+			<div class="container">
+			<!--Display all comments on current listing -->
 				{% for comment in comments %}
-					<h3>{{ comment.commenter }}</h3>
-					<p>{{ comment.comment }}</p>
+				<div class="card">
+					<div class="card-body">
+						<h4 class="card-title"><span class="badge badge-secondary">{{ comment.commenter }}</span></h4>
+						<p class="card-text">{{ comment.comment }}</p>
 				{% empty %}
-					<p>No comments on this listing</p>
+						<p class="card-text">No comments on this listing</p>
 				{% endfor %}
+					</div>
+				</div>
+			</div>
+			<br>
+			<!-- create a form to allow users to post comments -->
+			<div class="container">
+			<form action="{% url 'comment' item_id=listed_id %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<textarea class="form-control" rows="5" name="new_comment" type="text" placeholder="Add comment"></textarea>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-success" type="submit">Comment</button>
+				</div>
+			</form>
 			</div>
 		{% endif %}
 	{% endif %}
-
+</div>
 {% endblock %}

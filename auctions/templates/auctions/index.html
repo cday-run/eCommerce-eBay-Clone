@@ -13,23 +13,52 @@
     	<p>Login to Create a Listing</p>
     {% endif %}
     <!-- Display all listings and information about them -->
-    <ul>
-    	{% for item in listings %}
-    		<li><p hidden>{{ item.listed_id }}</p> <a href="{% url 'listed' item_id=item.listed_id %}">{{ item.item_name }}</a> {{ item.price }}
-            {% if item.available == False %}
-                <button class="btn btn-danger">Closed</button>
-            {% endif %} 
-            <p>{{ item.item_description }}</p> 
-            {% if item.image %}
-                <a href="{{ item.image }}" target="blank">See Image</a> 
-            {% else %}
-                <p>No image</p>
-            {% endif %}
-            <br>{{ item.category }} 
-            </li>
-    	{% empty %}
-    		<li>No Listings</li>
-    	{% endfor %}
-    </ul>
+    <div class="container">
+        	{% for item in listings %}
+        		<div class="card"><p hidden>{{ item.listed_id }}</p>
+                    <div class="card-body">
+                    <h4 class="card-title d-flex justify-content-between align-items-center"><a href="{% url 'listed' item_id=item.listed_id %}" >{{ item.item_name }}</a>
+                    {% if item.available == False %}
+                        <span class="badge badge-danger">Closed</span>
+                    {% endif %}
+                    </h4> 
+                    <h5 class="card-subtitle mb-2">${{ item.price }}
+                    </h5> 
+                    <p class="card-text">{{ item.item_description }}</p> 
+                    {% if item.image %}
+                        <a class="card-link" href="{{ item.image }}" target="blank">See Image</a> 
+                    {% else %}
+                        <a class="card-text">No image</a>
+                    {% endif %}
+                    <br>
+                    <p><span class="badge badge-secondary">{{ item.category }}<span></p> 
+                </div>
+        	{% empty %}
+        		<p>No Listings</p>
+        	{% endfor %}
+        </div>
+    </div>
     
 {% endblock %}
+
+<!--         <ul class="list-group">
+            {% for item in listings %}
+                <li class="list-group-item list-group-item-action flex-column align-items-start"><p hidden>{{ item.listed_id }}</p>
+                    <a href="{% url 'listed' item_id=item.listed_id %}" >{{ item.item_name }}</a> 
+                    {{ item.price }}
+                    {% if item.available == False %}
+                        <span class="badge badge-danger">Closed</span>
+                    {% endif %} 
+                    <p>{{ item.item_description }}</p> 
+                    {% if item.image %}
+                        <a href="{{ item.image }}" target="blank">See Image</a> 
+                    {% else %}
+                        <p>No image</p>
+                    {% endif %}
+                    <br>
+                    {{ item.category }} 
+                </li>
+            {% empty %}
+                <li class="list-group-item list-group-item-action flex-column align-items-start">No Listings</li>
+            {% endfor %}
+        </ul> -->
