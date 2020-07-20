@@ -35,14 +35,14 @@
                         </h4> 
                         <h5 class="card-subtitle mb-2">${{ item.price }}
                         </h5> 
-                        <p class="card-text">{{ item.item_description }}</p> 
+                        <p class="card-text">{{ item.item_description }}</p>
+                        <p><span class="badge badge-secondary">{{ item.category }}<span></p>
                         {% if item.image %}
                             <img src="{{ item.image }}" alt="image" width="75" height="50">
                         {% else %}
                             <a class="card-text">No image</a>
                         {% endif %}
-                        <br>
-                        <p><span class="badge badge-secondary">{{ item.category }}<span></p>
+                        
                     </div> 
                 </div>
         	{% empty %}
@@ -51,25 +51,3 @@
     </div>
     
 {% endblock %}
-
-<!--         <ul class="list-group">
-            {% for item in listings %}
-                <li class="list-group-item list-group-item-action flex-column align-items-start"><p hidden>{{ item.listed_id }}</p>
-                    <a href="{% url 'listed' item_id=item.listed_id %}" >{{ item.item_name }}</a> 
-                    {{ item.price }}
-                    {% if item.available == False %}
-                        <span class="badge badge-danger">Closed</span>
-                    {% endif %} 
-                    <p>{{ item.item_description }}</p> 
-                    {% if item.image %}
-                        <a href="{{ item.image }}" target="blank">See Image</a> 
-                    {% else %}
-                        <p>No image</p>
-                    {% endif %}
-                    <br>
-                    {{ item.category }} 
-                </li>
-            {% empty %}
-                <li class="list-group-item list-group-item-action flex-column align-items-start">No Listings</li>
-            {% endfor %}
-        </ul> -->
